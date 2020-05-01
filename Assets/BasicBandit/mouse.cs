@@ -1,14 +1,19 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Diagnostics;
+using System.Security.Cryptography;
 using UnityEngine;
 
-public class mous : MonoBehaviour
+public class mouse : MonoBehaviour
 {
-    private Vector3 mousePosition;
+    private Vector3 posObj;
+    private RaycastHit rayHit;
+    private GameObject collideObj;
+    private float distance;
     private Rigidbody rb;
     private Vector2 direction;
-    private float moveSpeed = 100f;
+    private float moveSpeed = 1f;
     // Start is called before the first frame update
     void Start()
     {
@@ -20,13 +25,15 @@ public class mous : MonoBehaviour
     {
         if (Input.GetMouseButton(0))
         {
-            mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            direction = (mousePosition - transform.position).normalized;
-            rb.velocity = new Vector2(direction.x * moveSpeed, direction.y * moveSpeed);
-        }
-        else
-        {
-            rb.velocity = Vector2.zero;
+            var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            var hit = Physics.Raycast(ray.origin, ray.direction, out rayHit);
+            if (hit)
+            {
+                collideObj = rayHit.collider.gameObject;
+                distance = rayHit.distance;
+            }
+            posObj = ray.origin + distance * ray.direction;
+            collideObj.transform.position = new Vector3(posObj.x, posObj.y, collideObj.transform.position.z);
         }
     }
 }
