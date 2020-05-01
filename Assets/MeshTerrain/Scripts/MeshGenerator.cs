@@ -5,12 +5,18 @@ using UnityEngine;
 [RequireComponent(typeof(MeshFilter))]
 public class MeshGenerator : MonoBehaviour
 {
-    // grid size
+    // grid settings
     public int xSize = 50;
     public int zSize = 50;
     public Gradient gradient;
     public float maxTerrainHeight = 5f;
     public float heightModifier = 5f;
+    // grid settings - perlin noise offsets
+    public float perlinOffsetX = 0;
+    public float perlinOffsetY = 0;
+    public float perlinScale = .3f;
+    // movement settings
+    public float speed = 0;
 
     Mesh mesh;
 
@@ -33,7 +39,26 @@ public class MeshGenerator : MonoBehaviour
     {
         //CreateShape();
         //UpdateMesh();
-        //transform.Translate(Vector3.forward * Time.deltaTime * speed);
+        transform.Translate(Vector3.back * Time.deltaTime * speed);
+
+        if (transform.position.z <= -50)
+        {
+            perlinOffsetY += 200;
+
+            CreateShape();
+            UpdateMesh();
+
+            transform.Translate(Vector3.forward * 200);
+        }
+    }
+
+    public void EditorGenerate()
+    {
+        mesh = new Mesh();
+        GetComponent<MeshFilter>().mesh = mesh;
+
+        CreateShape();
+        UpdateMeshEditor();
     }
 
     void CreateShape()
@@ -48,7 +73,7 @@ public class MeshGenerator : MonoBehaviour
             for (int x = 0; x <= xSize; ++x)
             {
                 heightLimiter = Mathf.Max((Mathf.Abs(x - xSizeHalf) - 10)/(xSizeHalf - 10), 0);
-                float y = (Mathf.PerlinNoise(x * .3f, z * .3f) * maxTerrainHeight + heightModifier) * heightLimiter;
+                float y = (Mathf.PerlinNoise((x + perlinOffsetX) * perlinScale, (z + perlinOffsetY) * perlinScale) * maxTerrainHeight + heightModifier) * heightLimiter;
 
                 vertices[i] = new Vector3(x, y, z);
                 ++i;
@@ -106,6 +131,20 @@ public class MeshGenerator : MonoBehaviour
         mesh.RecalculateBounds();
         MeshCollider meshCollider = gameObject.GetComponent<MeshCollider>();
         meshCollider.sharedMesh = mesh;
+    }
+
+    void UpdateMeshEditor()
+    {
+        // delete old data
+        mesh.Clear();
+
+        // load in generated data
+        mesh.vertices = vertices;
+        mesh.triangles = triangles;
+        mesh.colors = colours;
+
+        // recalculate lighting
+        mesh.RecalculateNormals();
     }
 
     private void OnDrawGizmos()

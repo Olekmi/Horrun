@@ -32,6 +32,12 @@ public class TerrainGenerator : MonoBehaviour
         terrain.terrainData = GenerateTerrain(terrain.terrainData);   
     }
 
+    public void EditorGenerate()
+    {
+        Terrain terrain = GetComponent<Terrain>();
+        terrain.terrainData = GenerateTerrain(terrain.terrainData);
+    }
+
     TerrainData GenerateTerrain(TerrainData terrainData) 
     {
         terrainData.size = new Vector3(width, height, length);
