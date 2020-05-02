@@ -27,6 +27,8 @@ public class gun_script : MonoBehaviour
             if (target != null)
             {
                 target.TakeDamage(damage);
+
+                keepScore.scoreValue += 10;
             }
         }
     }
