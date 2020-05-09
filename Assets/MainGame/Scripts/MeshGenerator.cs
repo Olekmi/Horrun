@@ -16,7 +16,9 @@ public class MeshGenerator : MonoBehaviour
     public float perlinOffsetY = 0;
     public float perlinScale = .3f;
     // movement settings
-    public float speed = 0;
+
+    public GameObject DifficultyManager;
+    private DifficultyHandler dh;
 
     Mesh mesh;
 
@@ -27,6 +29,8 @@ public class MeshGenerator : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        dh = DifficultyManager.GetComponent<DifficultyHandler>();
+
         mesh = new Mesh();
         GetComponent<MeshFilter>().mesh = mesh;
 
@@ -39,7 +43,7 @@ public class MeshGenerator : MonoBehaviour
     {
         //CreateShape();
         //UpdateMesh();
-        transform.Translate(Vector3.back * Time.deltaTime * speed);
+        transform.Translate(Vector3.back * Time.deltaTime * dh.scrollSpeed);
 
         if (transform.position.z <= -50)
         {
