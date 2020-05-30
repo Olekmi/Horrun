@@ -15,10 +15,6 @@ public class MeshGenerator : MonoBehaviour
     public float perlinOffsetX = 0;
     public float perlinOffsetY = 0;
     public float perlinScale = .3f;
-    // movement settings
-
-    public GameObject DifficultyManager;
-    private DifficultyHandler dh;
 
     Mesh mesh;
 
@@ -29,8 +25,6 @@ public class MeshGenerator : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        dh = DifficultyManager.GetComponent<DifficultyHandler>();
-
         mesh = new Mesh();
         GetComponent<MeshFilter>().mesh = mesh;
 
@@ -41,9 +35,14 @@ public class MeshGenerator : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
+    }
+
+    void FixedUpdate()
+    {
         //CreateShape();
         //UpdateMesh();
-        transform.Translate(Vector3.back * Time.deltaTime * dh.scrollSpeed);
+        transform.Translate(Vector3.back * Time.deltaTime * DifficultyHandler.Instance.scrollSpeed);
 
         if (transform.position.z <= -50)
         {
@@ -71,12 +70,12 @@ public class MeshGenerator : MonoBehaviour
         vertices = new Vector3[(xSize + 1) * (zSize + 1)];
 
         float heightLimiter = 0;
-        float xSizeHalf = (float)xSize/2;
+        float xSizeHalf = (float)xSize / 2;
         for (int i = 0, z = 0; z <= zSize; ++z)
         {
             for (int x = 0; x <= xSize; ++x)
             {
-                heightLimiter = Mathf.Max((Mathf.Abs(x - xSizeHalf) - 10)/(xSizeHalf - 10), 0);
+                heightLimiter = Mathf.Max((Mathf.Abs(x - xSizeHalf) - 10) / (xSizeHalf - 10), 0);
                 float y = (Mathf.PerlinNoise((x + perlinOffsetX) * perlinScale, (z + perlinOffsetY) * perlinScale) * maxTerrainHeight + heightModifier) * heightLimiter;
 
                 vertices[i] = new Vector3(x, y, z);

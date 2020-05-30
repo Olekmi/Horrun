@@ -6,10 +6,15 @@ public class PlayerController : MonoBehaviour
 {
     // private variables
     private new Rigidbody rigidbody;
-    private float xSpeed = 50.0f;
-    private float ySpeed = 40.0f;
+    public float xSpeed = 50.0f;
+    public float ySpeed = 40.0f;
+    public float invincibilityTime = 5f;
+    public GameObject hurtFX;
+    public AudioSource calmMusic;
+    public AudioSource intenseMusic;
     private float horizontalInput;
     private float verticalInput;
+    private float currInvTime;
     // Start is called before the first frame update
     void Start()
     {
@@ -35,5 +40,36 @@ public class PlayerController : MonoBehaviour
         // Vehicle turning
         if (Mathf.Abs(verticalInput) > 0.1)
             rigidbody.AddForce(Vector3.up * ySpeed * verticalInput);
+
+        // decrease invincibility time
+        currInvTime -= Time.deltaTime;
+    }
+
+    public void HurtPlayer()
+    {
+        if (currInvTime <= 0)
+        {
+            PlayerStats.Instance.TakeDamage(1);
+            GameObject inst = Instantiate(hurtFX, transform.position, Quaternion.identity);
+            inst.GetComponent<FollowPlayer>().player = gameObject;
+            Destroy(inst, invincibilityTime);
+            currInvTime = invincibilityTime;
+            if (PlayerStats.Instance.Health <= 1 && PlayerStats.Instance.Health > 0)
+            {
+                StartCoroutine(AudioFader.FadeOut(calmMusic, 3));
+                StartCoroutine(AudioFader.FadeIn(intenseMusic, 3));
+            }
+        }
+    }
+
+    public void HealPlayer(float hp)
+    {
+        
+        if (PlayerStats.Instance.Health <= 1)
+        {
+            StartCoroutine(AudioFader.FadeIn(calmMusic, 3));
+            StartCoroutine(AudioFader.FadeOut(intenseMusic, 3));
+        }
+        PlayerStats.Instance.Heal(hp);
     }
 }

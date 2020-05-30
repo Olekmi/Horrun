@@ -4,14 +4,18 @@ using UnityEngine;
 
 public class ObstacleSpawner : MonoBehaviour
 {
-    public GameObject DifficultyManager;
     public const int maxCubes = 15;
     private uint[] positions = new uint[15];
     private uint tempPos;
     public Vector3 originPos = new Vector3(-8f, 2f, 198f);
     public GameObject objectToSpawn = null;
-    public int min = 0;
-    public int max = 0;
+    public int minObstacle = 0;
+    public int maxObstacle = 0;
+    public GameObject enemyToSpawn = null;
+    public int minEnemy = 0;
+    public int maxEnemy = 0;
+    public GameObject projectileFX;
+    public GameObject explosionFX;
 
     void Start()
     {
@@ -24,26 +28,34 @@ public class ObstacleSpawner : MonoBehaviour
     void Spawn()
     {
         // if invalid range, return without spawning
-        if (min < 0 || max > maxCubes) return;
+        if (minObstacle < 0 || maxObstacle + maxEnemy > maxCubes || minEnemy < 0 
+            || minObstacle > maxObstacle || minEnemy > maxEnemy) return;
 
         Shuffle();
 
-        int cubeNumber = Random.Range(min, max + 1);
+        int cubeNumber = Random.Range(minObstacle, maxObstacle + 1);
+        int enemyNumber = Random.Range(minEnemy, maxEnemy + 1);
         
         float x, y;
-        GameObject instance;
-        CubeObstacleBehaviour script;
-        for (int i = 0; i < cubeNumber; ++i)
+        for (int i = 0; i < cubeNumber + enemyNumber; ++i)
         {
             // get position
             uint pos = positions[i];
             x = originPos.x + ((positions[i] % 5) * 4);
             y = originPos.y + ((positions[i] / 5) * 4);
-            
-            // spawn object
-            instance = Instantiate(objectToSpawn, new Vector3(x, y, originPos.z), Quaternion.identity);
-            script = instance.GetComponent<CubeObstacleBehaviour>();
-            script.DifficultyManager = DifficultyManager;
+
+            if (i < cubeNumber)
+            {
+                // spawn object
+                Instantiate(objectToSpawn, new Vector3(x, y, originPos.z), Quaternion.identity);
+            }
+            else
+            {
+                Enemy inst = Instantiate(enemyToSpawn, new Vector3(x, y, originPos.z), Quaternion.identity * Quaternion.Euler(0, 180, 0)).GetComponent<Enemy>();
+                inst.projectileFX = projectileFX;
+                inst.explosionFX = explosionFX;
+                inst.initShootDelay = Random.Range(0f, 1f);
+            }
         }
     }
 

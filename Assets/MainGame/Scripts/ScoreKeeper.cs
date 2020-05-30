@@ -14,7 +14,7 @@ public class ScoreKeeper : MonoBehaviour
     {
         scoreDisplay = GetComponent<Text>();
 
-        InvokeRepeating("timeBonus", 0f, 1f);
+        InvokeRepeating("timeBonus", 0f, .1f);
     }
 
     // Update is called once per frame
