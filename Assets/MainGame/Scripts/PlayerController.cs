@@ -1,6 +1,7 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
@@ -15,6 +16,12 @@ public class PlayerController : MonoBehaviour
     private float horizontalInput;
     private float verticalInput;
     private float currInvTime;
+
+    public GameObject endMenuUI;
+   // public GameObject gameUI;
+    public static bool GameIsPaused = false;
+    public static bool endgame = false;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -43,6 +50,13 @@ public class PlayerController : MonoBehaviour
 
         // decrease invincibility time
         currInvTime -= Time.deltaTime;
+        if (endgame)
+        {
+            endMenuUI.SetActive(true);
+            GameIsPaused = true;
+            Time.timeScale = 0f;
+            //gameUI.SetActive(false);
+        }
     }
 
     public void HurtPlayer()
@@ -58,6 +72,18 @@ public class PlayerController : MonoBehaviour
             {
                 StartCoroutine(AudioFader.FadeOut(calmMusic, 3));
                 StartCoroutine(AudioFader.FadeIn(intenseMusic, 3));
+            }
+
+            else if (PlayerStats.Instance.Health <= 0)
+            {
+                
+                endgame = true;
+             //   Time.timeScale = 0f;
+                GameIsPaused = true;
+               // SceneManager.LoadScene("Endmenu");
+                //FindObjectOfType<GameManager>().EndGame();
+                //EndMenu();
+
             }
         }
     }
