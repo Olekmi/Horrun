@@ -13,6 +13,7 @@ public class DifficultyHandler: MonoBehaviour
     private float newScrollSpeed = 50f;
     // interpolation times
     private float scrollAnimationTime = 1.1f;
+    private float previousInvokeRate = 0f;
 
     // associated objects
     public GameObject spawner = null;
@@ -39,13 +40,7 @@ public class DifficultyHandler: MonoBehaviour
         spawnerScript = spawner.GetComponent<ObstacleSpawner>();
         pSpawnerScript = potionSpawner.GetComponent<PotionSpawner>();
 
-        spawnerScript.minObstacle = 3;
-        spawnerScript.maxObstacle = 5;
-        spawnerScript.InvokeRepeating("Spawn",0,5f);
-
-        pSpawnerScript.chance = .1f;
-        pSpawnerScript.maxHealth = 3f;
-        pSpawnerScript.InvokeRepeating("Spawn", 2.5f, 5f);
+        setSpawnRate(3, 5, 3, 5, 3f, .1f, 5);
     }
 
     public void setSpeed(float newScrollSpeed, float scrollTransitionSeconds)
@@ -56,6 +51,24 @@ public class DifficultyHandler: MonoBehaviour
         scrollAnimSeconds = scrollTransitionSeconds;
     }
 
+    public void setSpawnRate(int minObstacle, int maxObstacle, int minEnemy, int maxEnemy, float maxHealth, float chance, float sec)
+    {
+        spawnerScript.CancelInvoke();
+        pSpawnerScript.CancelInvoke();
+
+        spawnerScript.minObstacle = minObstacle;
+        spawnerScript.maxObstacle = maxObstacle;
+        spawnerScript.minEnemy = minEnemy;
+        spawnerScript.maxEnemy = maxEnemy;
+        pSpawnerScript.maxHealth = maxHealth;
+        pSpawnerScript.chance = chance;
+
+        spawnerScript.InvokeRepeating("Spawn", previousInvokeRate, sec);
+        pSpawnerScript.InvokeRepeating("Spawn", previousInvokeRate + (sec/2), sec);
+
+        previousInvokeRate = sec;
+    }
+
     public void Update()
     {
         // scroll speed update
@@ -64,8 +77,7 @@ public class DifficultyHandler: MonoBehaviour
             if (scrollAnimationTime <= 1)
             {
                 // time update
-                if (scrollSpeed < newScrollSpeed) scrollAnimationTime = Mathf.Max(1f, scrollAnimationTime + Time.deltaTime / scrollAnimSeconds);
-                else scrollAnimationTime = Mathf.Min(0f, scrollAnimationTime - Time.deltaTime / scrollAnimSeconds);
+                scrollAnimationTime = Mathf.Max(1f, scrollAnimationTime + Time.deltaTime / scrollAnimSeconds);
                 // value update
                 scrollSpeed = Mathf.Lerp(oldScrollSpeed, newScrollSpeed, scrollAnimationTime);
             }

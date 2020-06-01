@@ -56,6 +56,10 @@ public class PlayerController : MonoBehaviour
             currInvTime = invincibilityTime;
             if (PlayerStats.Instance.Health <= 1 && PlayerStats.Instance.Health > 0)
             {
+                // stop any coroutine doing inverse fading
+                StopCoroutine(AudioFader.FadeIn(calmMusic, 3));
+                StopCoroutine(AudioFader.FadeOut(intenseMusic, 3));
+                // start fading into intense music
                 StartCoroutine(AudioFader.FadeOut(calmMusic, 3));
                 StartCoroutine(AudioFader.FadeIn(intenseMusic, 3));
             }
@@ -67,6 +71,10 @@ public class PlayerController : MonoBehaviour
         
         if (PlayerStats.Instance.Health <= 1)
         {
+            // stop any coroutine doing inverse fading
+            StopCoroutine(AudioFader.FadeOut(calmMusic, 3));
+            StopCoroutine(AudioFader.FadeIn(intenseMusic, 3));
+            // start fading into calm music
             StartCoroutine(AudioFader.FadeIn(calmMusic, 3));
             StartCoroutine(AudioFader.FadeOut(intenseMusic, 3));
         }

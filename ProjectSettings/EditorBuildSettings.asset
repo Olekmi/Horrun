@@ -11,4 +11,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/MainGame/Scenes/MeshTerrainGen.unity
     guid: e21bf79c7c59afcdda2a34c100ee83b2
+  - enabled: 1
+    path: Assets/MainGame/Scenes/MeshTerrainGenHeart.unity
+    guid: 7eadd5a49b5503a4cb196a34ded51efc
   m_configObjects: {}

@@ -6,14 +6,24 @@ using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
-public void PlayGame ()
+    public int modeChoice = 0;
+    public void PlayGame()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + modeChoice + 1);
     }
-public void QuitGame ()
+    public void QuitGame()
     {
         Debug.Log("QUIT!");
         Application.Quit();
+    }
+    public void SetAdaptation()
+    {
+        modeChoice = 1;
+    }
+
+    public void SetNormal()
+    {
+        modeChoice = 0;
     }
 }
 
