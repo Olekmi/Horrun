@@ -19,7 +19,6 @@ public class PlayerController : MonoBehaviour
 
     public GameObject endMenuUI;
    // public GameObject gameUI;
-    public static bool GameIsPaused = false;
     public static bool endgame = false;
 
     // Start is called before the first frame update
@@ -54,7 +53,7 @@ public class PlayerController : MonoBehaviour
         if (endgame)
         {
             endMenuUI.SetActive(true);
-            GameIsPaused = true;
+            PauseMenu.GameIsPaused = true;
             Time.timeScale = 0f;
             //gameUI.SetActive(false);
         }
@@ -80,7 +79,7 @@ public class PlayerController : MonoBehaviour
                 
                 endgame = true;
              //   Time.timeScale = 0f;
-                GameIsPaused = true;
+                PauseMenu.GameIsPaused = true;
                // SceneManager.LoadScene("Endmenu");
                 //FindObjectOfType<GameManager>().EndGame();
                 //EndMenu();
