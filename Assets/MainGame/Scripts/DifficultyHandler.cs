@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DifficultyHandler: MonoBehaviour
+public class DifficultyHandler : MonoBehaviour
 {
     // difficulty constants
     private float scrollAnimSeconds = 3f;
@@ -19,8 +19,9 @@ public class DifficultyHandler: MonoBehaviour
     public GameObject spawner = null;
     private ObstacleSpawner spawnerScript = null;
     public GameObject potionSpawner = null;
+    public Material skyBoxMaterial;
     private PotionSpawner pSpawnerScript = null;
-    
+
     // make this a singleton
     #region Singleton
     private static DifficultyHandler instance;
@@ -39,11 +40,12 @@ public class DifficultyHandler: MonoBehaviour
     {
         spawnerScript = spawner.GetComponent<ObstacleSpawner>();
         pSpawnerScript = potionSpawner.GetComponent<PotionSpawner>();
+        skyBoxMaterial.SetFloat("_Blend", .5f);
 
-        setSpawnRate(3, 5, 3, 5, 3f, .1f, 5);
+        SetSpawnRate(3, 5, 3, 5, 3f, .1f, 5);
     }
 
-    public void setSpeed(float newScrollSpeed, float scrollTransitionSeconds)
+    public void SetSpeed(float newScrollSpeed, float scrollTransitionSeconds)
     {
         oldScrollSpeed = scrollSpeed;
         this.newScrollSpeed = newScrollSpeed;
@@ -51,7 +53,7 @@ public class DifficultyHandler: MonoBehaviour
         scrollAnimSeconds = scrollTransitionSeconds;
     }
 
-    public void setSpawnRate(int minObstacle, int maxObstacle, int minEnemy, int maxEnemy, float maxHealth, float chance, float sec)
+    public void SetSpawnRate(int minObstacle, int maxObstacle, int minEnemy, int maxEnemy, float maxHealth, float chance, float sec)
     {
         spawnerScript.CancelInvoke();
         pSpawnerScript.CancelInvoke();
@@ -64,9 +66,38 @@ public class DifficultyHandler: MonoBehaviour
         pSpawnerScript.chance = chance;
 
         spawnerScript.InvokeRepeating("Spawn", previousInvokeRate, sec);
-        pSpawnerScript.InvokeRepeating("Spawn", previousInvokeRate + (sec/2), sec);
+        pSpawnerScript.InvokeRepeating("Spawn", previousInvokeRate + (sec / 2), sec);
 
         previousInvokeRate = sec;
+    }
+
+    public IEnumerator SkyBoxChanger(float value, float changeTime)
+    {
+        float currBlend = skyBoxMaterial.GetFloat("_Blend");
+        if (value > currBlend)
+        {
+            while (currBlend < value)
+            {
+                currBlend += Time.deltaTime / changeTime;
+                skyBoxMaterial.SetFloat("_Blend", currBlend);
+
+                yield return null;
+            }
+
+            skyBoxMaterial.SetFloat("_Blend", value);
+        }
+        else
+        {
+            while (currBlend > value)
+            {
+                currBlend -= Time.deltaTime / changeTime;
+                skyBoxMaterial.SetFloat("_Blend", currBlend);
+
+                yield return null;
+            }
+
+            skyBoxMaterial.SetFloat("_Blend", value);
+        }
     }
 
     public void Update()

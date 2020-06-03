@@ -2,17 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DifficultyHeartRate : MonoBehaviour
+public class PerformanceDifficulty : MonoBehaviour
 {
-    public GameObject heartRateStatsObject;
-    public float diffcultyCheckRate = 15f;
-    private HeartRateStats heartRateStats;
-    private int difficulty = 3; // 5 levels of difficulty
+    private int difficulty = 3;
+    public float diffCheckTime = 15f;
     // Start is called before the first frame update
     void Start()
     {
-        heartRateStats = heartRateStatsObject.GetComponent<HeartRateStats>();
-        InvokeRepeating("difficultyCheck", 1, diffcultyCheckRate);
+        InvokeRepeating("difficultyCheck", 0, diffCheckTime);
     }
 
     // Update is called once per frame
@@ -23,30 +20,33 @@ public class DifficultyHeartRate : MonoBehaviour
 
     private void difficultyCheck()
     {
-        // make it more difficult
-        if (heartRateStats.changeInBpm < 0 && difficulty < 5)
+        // if health is >3 then increase difficulty gradually
+        // if health is <=3 then maximalize difficulty.
+        switch (PlayerStats.Instance.Health)
         {
-            ++difficulty;
-            changeDifficulty();
+            case float n when (n > 3):
+                ++difficulty;
+                break;
+            case float n when (3 <= n && n > 2):
+                if (difficulty > 4) difficulty = 4;
+                break;
+            case float n when (2 <= n && n > 1):
+                if (difficulty > 3) difficulty = 3;
+                break;
+            case float n when (n <= 1 && n > 0):
+                if (difficulty > 2) difficulty = 2;
+                break;
+            default:
+                break;
         }
-        // make it easier
-        else if (heartRateStats.changeInBpm > 0 && difficulty > 1)
-        {
-            --difficulty;
-            changeDifficulty();
-        }
+        // update difficulty
+        changeDifficulty();
     }
 
     private void changeDifficulty()
     {
         switch (difficulty)
         {
-            case 1:
-                Debug.Log("dif 1");
-                DifficultyHandler.Instance.SetSpeed(30, 5);
-                DifficultyHandler.Instance.SetSpawnRate(1, 3, 0, 1, 5, .5f, 5);
-                StartCoroutine(DifficultyHandler.Instance.SkyBoxChanger(0f, 5));
-                break;
             case 2:
                 Debug.Log("dif 2");
                 DifficultyHandler.Instance.SetSpeed(50, 5);

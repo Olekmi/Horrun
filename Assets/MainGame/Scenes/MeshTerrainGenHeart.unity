@@ -842,6 +842,7 @@ MonoBehaviour:
   scrollSpeed: 50
   spawner: {fileID: 1106013928}
   potionSpawner: {fileID: 67894145}
+  skyBoxMaterial: {fileID: 2100000, guid: 7c78ea7120a9c4cea855d43f4ab1c4e2, type: 2}
 --- !u!4 &357767360
 Transform:
   m_ObjectHideFlags: 0
@@ -992,8 +993,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 170, y: -30}
-  m_SizeDelta: {x: 300, y: 30}
+  m_AnchoredPosition: {x: 190, y: -45}
+  m_SizeDelta: {x: 340, y: 60}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &590962165
 MonoBehaviour:
@@ -1008,7 +1009,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_Color: {r: 0.7607843, g: 0.7607843, b: 0.7607843, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -1026,7 +1027,9 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'SCORE: 0000000'
+  m_Text: 'HIGH SCORE: 0000000
+
+    SCORE: 0000000'
 --- !u!222 &590962166
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1047,6 +1050,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 768209735af62f86bb254ecf2e418b98, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  heartHighScore: 1
 --- !u!1 &619926824
 GameObject:
   m_ObjectHideFlags: 0
