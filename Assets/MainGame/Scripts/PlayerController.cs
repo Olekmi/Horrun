@@ -15,10 +15,18 @@ public class PlayerController : MonoBehaviour
     private float horizontalInput;
     private float verticalInput;
     private float currInvTime;
+    public GameObject endMenuUI;
+    public GameObject newHighScoreText;
+    public AudioSource hurtSound;
+    public static bool endgame = false;
+    public static bool newHighScore = false;
     // Start is called before the first frame update
     void Start()
     {
         rigidbody = GetComponent<Rigidbody>();
+        Time.timeScale = 1f;
+        endgame = false;
+        newHighScore = false;
     }
 
     // Update is called once per frame
@@ -43,12 +51,26 @@ public class PlayerController : MonoBehaviour
 
         // decrease invincibility time
         currInvTime -= Time.deltaTime;
+        
+        // if the game has ended
+        if (endgame)
+        {
+            endMenuUI.SetActive(true);
+            PauseMenu.GameIsPaused = true;
+            Time.timeScale = 0f;
+            if (newHighScore)
+            {
+                Debug.Log("HEY");
+                newHighScoreText.SetActive(true);
+            }
+        }
     }
 
     public void HurtPlayer()
     {
         if (currInvTime <= 0)
         {
+            hurtSound.Play();
             PlayerStats.Instance.TakeDamage(1);
             GameObject inst = Instantiate(hurtFX, transform.position, Quaternion.identity);
             inst.GetComponent<FollowPlayer>().player = gameObject;
@@ -62,6 +84,11 @@ public class PlayerController : MonoBehaviour
                 // start fading into intense music
                 StartCoroutine(AudioFader.FadeOut(calmMusic, 3));
                 StartCoroutine(AudioFader.FadeIn(intenseMusic, 3));
+            }
+            else if (PlayerStats.Instance.Health <= 0)
+            {
+                endgame = true;
+                PauseMenu.GameIsPaused = true;
             }
         }
     }

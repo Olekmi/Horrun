@@ -25,7 +25,7 @@ public class PerformanceDifficulty : MonoBehaviour
         switch (PlayerStats.Instance.Health)
         {
             case float n when (n > 3):
-                ++difficulty;
+                if (difficulty < 5) ++difficulty;
                 break;
             case float n when (3 <= n && n > 2):
                 if (difficulty > 4) difficulty = 4;

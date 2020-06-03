@@ -49,7 +49,11 @@ public class ScoreKeeper : MonoBehaviour
             }
         }
 
-        if (score > highScore) highScore = score;
+        if (score > highScore) 
+        {
+            highScore = score;
+            PlayerController.newHighScore = true;
+        }
     }
 
     public void disableScoreChange()
@@ -60,6 +64,6 @@ public class ScoreKeeper : MonoBehaviour
 
     void OnDestroy()
     {
-        PlayerPrefs.SetInt("HighScore", highScore);
+        PlayerPrefs.SetInt("HighScore" + heartHighScore.ToString(), highScore);
     }
 }
