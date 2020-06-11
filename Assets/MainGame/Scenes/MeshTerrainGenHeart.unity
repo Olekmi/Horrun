@@ -6741,7 +6741,7 @@ MonoBehaviour:
   HeartRateClient: {fileID: 2079185339}
   currentBPM: 0
   peakMeasureTime: 15
-  changeTolerance: 2
+  changeTolerance: 1
   changeInBpm: 0
 --- !u!1 &1979252494
 GameObject:

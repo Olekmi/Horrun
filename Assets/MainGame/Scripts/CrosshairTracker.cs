@@ -15,4 +15,9 @@ public class CrosshairTracker : MonoBehaviour
     {
         transform.position = Input.mousePosition;
     }
+
+    void OnDestroy()
+    {
+        Cursor.visible = true;
+    }
 }

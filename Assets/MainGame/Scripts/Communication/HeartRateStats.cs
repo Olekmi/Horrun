@@ -12,8 +12,9 @@ public class HeartRateStats : MonoBehaviour
 
     public float peakMeasureTime = 15f;
     private float measureTimeCountDown = 0f;
-    private float maxBpmInPeriod = 0f;
-    private float previousMaxBpm = 0f;
+    private float avgBpmInPeriod = 0f;
+    private int noOfMeasurements = 0;
+    private float previousAvgBpm = 0f;
 
 
     public float changeTolerance = 2f; // variance within which the bpm is considered same
@@ -22,7 +23,7 @@ public class HeartRateStats : MonoBehaviour
     void Start()
     {
         bpmScript = HeartRateClient.GetComponent<HelloClient>();
-        previousMaxBpm = bpmScript.GetCurrentHeartRate();
+        previousAvgBpm = bpmScript.GetCurrentHeartRate();
         measureTimeCountDown = peakMeasureTime;
     }
 
@@ -31,23 +32,21 @@ public class HeartRateStats : MonoBehaviour
     {
         // get current heart rate, this should be safe to access as many times as needed
         currentBPM = bpmScript.GetCurrentHeartRate();
-        if (currentBPM > maxBpmInPeriod)
-            maxBpmInPeriod = currentBPM;
+        
+        avgBpmInPeriod += currentBPM;
+        ++noOfMeasurements;
 
         // getting the period's maximum
         measureTimeCountDown -= Time.deltaTime;
         if (measureTimeCountDown <= 0)
         {
-            if (currentBPM < 50f)
-            {
-                changeInBpm = 0;
-                return;
-            }
-            if (maxBpmInPeriod > previousMaxBpm + changeTolerance)
+            // noOfMeasurements has to be at least one because we call the incrementer just before
+            avgBpmInPeriod = avgBpmInPeriod / (float)noOfMeasurements;
+            if (avgBpmInPeriod > previousAvgBpm + changeTolerance)
             {
                 changeInBpm = 1;
             }
-            else if (maxBpmInPeriod < previousMaxBpm - changeTolerance)
+            else if (avgBpmInPeriod < previousAvgBpm - changeTolerance)
             {
                 changeInBpm = -1;
             }
@@ -56,8 +55,11 @@ public class HeartRateStats : MonoBehaviour
                 changeInBpm = 0;
             }
 
-            previousMaxBpm = maxBpmInPeriod;
-            maxBpmInPeriod = 0f;
+            previousAvgBpm = avgBpmInPeriod;
+            
+            avgBpmInPeriod = 0f;
+            noOfMeasurements = 0;
+            
             measureTimeCountDown = peakMeasureTime;
         }
     }
